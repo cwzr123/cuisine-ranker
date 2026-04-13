@@ -1,198 +1,259 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuisine Ranker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-.container { padding: 1.5rem 0; font-family: var(--font-sans); }
-.screen { display: none; }
-.screen.active { display: block; }
-h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.5rem; }
-p.sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.5rem; }
-.section-label { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-.cat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
-.cat-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; cursor: pointer; transition: border-color 0.15s; }
-.cat-card:hover { border-color: var(--color-border-primary); }
-.cat-card.selected { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
-.cat-card h3 { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
-.cat-card p { font-size: 12px; color: var(--color-text-secondary); }
-.mode-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
-.mode-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; cursor: pointer; transition: border-color 0.15s; }
-.mode-card:hover { border-color: var(--color-border-primary); }
-.mode-card.selected { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
-.mode-card h3 { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
-.mode-card p { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
-.btn-primary { background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 9px 20px; font-size: 14px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; transition: background 0.15s; }
-.btn-primary:hover { background: var(--color-background-secondary); }
-.btn-primary:disabled { opacity: 0.35; cursor: default; }
-.battle-area { display: flex; gap: 12px; margin-bottom: 1.5rem; align-items: stretch; }
-.cuisine-btn { flex: 1; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem 1rem; cursor: pointer; font-size: 16px; font-weight: 500; color: var(--color-text-primary); text-align: center; transition: background 0.15s, border-color 0.15s; line-height: 1.4; }
-.cuisine-btn:hover { background: var(--color-background-secondary); border-color: var(--color-border-secondary); }
-.cuisine-btn .flag { font-size: 28px; display: block; margin-bottom: 8px; }
-.vs-divider { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--color-text-tertiary); padding: 0 4px; }
-.progress-bar { height: 4px; background: var(--color-background-secondary); border-radius: 2px; margin-bottom: 1rem; }
-.progress-fill { height: 100%; background: var(--color-border-primary); border-radius: 2px; transition: width 0.3s; }
-.status-line { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1.5rem; }
-.scoreboard { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
-.score-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); }
-.score-rank { font-size: 13px; font-weight: 500; color: var(--color-text-tertiary); min-width: 24px; }
-.score-rank.gold { color: #BA7517; }
-.score-rank.silver { color: #888780; }
-.score-rank.bronze { color: #993C1D; }
-.score-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
-.score-bar-wrap { width: 90px; height: 4px; background: var(--color-background-secondary); border-radius: 2px; }
-.score-bar { height: 100%; background: var(--color-border-primary); border-radius: 2px; }
-.score-val { font-size: 13px; color: var(--color-text-secondary); min-width: 44px; text-align: right; }
-.rr-mini-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 12px; }
-.rr-mini-table th { font-weight: 500; color: var(--color-text-secondary); padding: 4px 6px; text-align: left; border-bottom: 0.5px solid var(--color-border-tertiary); }
-.rr-mini-table td { padding: 4px 6px; color: var(--color-text-primary); border-bottom: 0.5px solid var(--color-border-tertiary); }
-.rr-leader { background: var(--color-background-secondary); }
-.back-btn { font-size: 13px; color: var(--color-text-secondary); background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 1.25rem; display: inline-block; }
-.back-btn:hover { color: var(--color-text-primary); }
-.winner-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 2rem 1.5rem; text-align: center; margin-bottom: 1.5rem; }
-.winner-flag { font-size: 56px; display: block; margin-bottom: 12px; }
-.winner-name { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
-.winner-label { font-size: 13px; color: var(--color-text-secondary); }
-.bracket-scroll { overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 8px; }
-.bracket-wrap { display: flex; gap: 0; align-items: stretch; min-width: max-content; }
-.bracket-round { display: flex; flex-direction: column; justify-content: space-around; }
-.round-header { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; text-align: center; padding: 0 12px 10px; }
-.round-matches { display: flex; flex-direction: column; flex: 1; justify-content: space-around; }
-.bracket-match-wrap { display: flex; align-items: center; }
-.bracket-match { display: flex; flex-direction: column; width: 130px; margin: 0 0 0 12px; }
-.bracket-entry { font-size: 12px; padding: 5px 8px; border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bracket-entry:first-child { border-radius: 4px 4px 0 0; border-bottom: none; }
-.bracket-entry:last-child { border-radius: 0 0 4px 4px; }
-.bracket-entry.winner { color: var(--color-text-primary); font-weight: 500; background: var(--color-background-secondary); }
-.bracket-entry.bye { color: var(--color-text-tertiary); font-style: italic; }
-.connector { display: flex; flex-direction: column; justify-content: center; width: 12px; flex-shrink: 0; }
-.conn-top { flex: 1; border-right: 0.5px solid var(--color-border-tertiary); border-bottom: 0.5px solid var(--color-border-tertiary); }
-.conn-bot { flex: 1; border-right: 0.5px solid var(--color-border-tertiary); border-top: 0.5px solid var(--color-border-tertiary); }
-.champion-entry { font-size: 13px; padding: 6px 10px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; border-radius: 4px; margin-left: 12px; white-space: nowrap; align-self: center; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F5F0E8; --warm-white: #FAF7F2; --ink: #1A1512;
+    --ink-60: rgba(26,21,18,0.6); --ink-20: rgba(26,21,18,0.12); --ink-10: rgba(26,21,18,0.06);
+    --spice: #C4420A; --spice-light: #F5E8E0; --gold: #B8860B; --gold-light: #F5EFD6;
+    --serif: 'DM Serif Display', Georgia, serif; --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
+    --radius: 12px; --radius-sm: 6px;
+  }
+  html,body { min-height:100%; background:var(--cream); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .app { max-width:480px; margin:0 auto; min-height:100vh; padding:0 20px 40px; display:flex; flex-direction:column; }
+  .app-header { padding:28px 0 20px; display:flex; align-items:baseline; gap:10px; border-bottom:1px solid var(--ink-20); margin-bottom:28px; }
+  .app-header h1 { font-family:var(--serif); font-size:24px; color:var(--ink); letter-spacing:-0.02em; }
+  .app-header .tagline { font-family:var(--mono); font-size:11px; color:var(--ink-60); letter-spacing:0.04em; text-transform:uppercase; }
+  .screen { display:none; animation:fadeIn 0.25s ease; flex:1; }
+  .screen.active { display:flex; flex-direction:column; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .label { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-60); margin-bottom:10px; }
+  .cat-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:24px; }
+  .cat-card { background:var(--warm-white); border:1px solid var(--ink-20); border-radius:var(--radius); padding:12px 10px; cursor:pointer; transition:border-color 0.15s,background 0.15s,transform 0.1s; text-align:center; }
+  .cat-card:hover { border-color:rgba(26,21,18,0.3); transform:translateY(-1px); }
+  .cat-card.selected { border-color:var(--spice); background:var(--spice-light); }
+  .cat-card .cat-icon { font-size:22px; display:block; margin-bottom:6px; }
+  .cat-card h3 { font-family:var(--serif); font-size:13px; color:var(--ink); line-height:1.2; margin-bottom:2px; }
+  .cat-card p { font-size:10px; color:var(--ink-60); font-family:var(--mono); }
+  .cat-card.random-card { border-style:dashed; }
+  .mode-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px; }
+  .mode-card { background:var(--warm-white); border:1px solid var(--ink-20); border-radius:var(--radius); padding:14px 12px; cursor:pointer; transition:border-color 0.15s,background 0.15s,transform 0.1s; }
+  .mode-card:hover { border-color:rgba(26,21,18,0.3); transform:translateY(-1px); }
+  .mode-card.selected { border-color:var(--spice); background:var(--spice-light); }
+  .mode-card h3 { font-family:var(--serif); font-size:15px; color:var(--ink); margin-bottom:4px; }
+  .mode-card p { font-size:11px; color:var(--ink-60); line-height:1.5; }
+  .survivor-note { font-family:var(--mono); font-size:10px; color:var(--ink-60); line-height:1.6; padding:10px 12px; background:var(--ink-10); border-radius:var(--radius-sm); margin-bottom:20px; display:none; }
+  .survivor-note.visible { display:block; }
+  .btn-start { background:var(--ink); color:var(--cream); border:none; border-radius:var(--radius); padding:14px 28px; font-family:var(--serif); font-size:17px; cursor:pointer; transition:opacity 0.15s,transform 0.1s; letter-spacing:-0.01em; width:100%; }
+  .btn-start:hover:not(:disabled) { opacity:0.85; transform:translateY(-1px); }
+  .btn-start:active:not(:disabled) { transform:translateY(0); }
+  .btn-start:disabled { opacity:0.3; cursor:default; }
+  .btn-secondary { background:transparent; color:var(--ink); border:1px solid var(--ink-20); border-radius:var(--radius); padding:12px 24px; font-family:var(--sans); font-size:14px; font-weight:500; cursor:pointer; transition:border-color 0.15s,background 0.15s; width:100%; }
+  .btn-secondary:hover { border-color:rgba(26,21,18,0.4); background:var(--ink-10); }
+  .btn-back { background:none; border:none; font-family:var(--mono); font-size:12px; color:var(--ink-60); cursor:pointer; padding:0; margin-bottom:20px; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:6px; transition:color 0.15s; }
+  .btn-back:hover { color:var(--ink); }
+  .progress-wrap { margin-bottom:6px; }
+  .progress-track { height:2px; background:var(--ink-20); border-radius:1px; overflow:hidden; margin-bottom:8px; }
+  .progress-fill { height:100%; background:var(--spice); border-radius:1px; transition:width 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .match-label { font-family:var(--mono); font-size:11px; color:var(--ink-60); letter-spacing:0.05em; margin-bottom:20px; }
+  .battle-area { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:stretch; margin-bottom:16px; }
+  .cuisine-btn {
+    background:var(--warm-white); border:1.5px solid var(--ink-20); border-radius:var(--radius);
+    padding:0; cursor:pointer; overflow:hidden; min-height:200px;
+    transition:border-color 0.2s,transform 0.12s,box-shadow 0.2s,background 0.2s;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+  }
+  .cuisine-btn:hover { border-color:var(--spice); background:var(--spice-light); transform:scale(1.025); box-shadow:0 8px 24px rgba(26,21,18,0.1); }
+  .cuisine-btn:active { transform:scale(0.975); }
+  .btn-flag { font-size:48px; line-height:1; }
+  .btn-name { font-family:var(--serif); font-size:17px; color:var(--ink); text-align:center; line-height:1.25; padding:0 12px; }
+  .vs-col { display:flex; align-items:center; justify-content:center; padding:0 2px; }
+  .vs-label { font-family:var(--serif); font-style:italic; font-size:16px; color:var(--ink-60); }
+  .hint { font-family:var(--mono); font-size:10px; color:var(--ink-60); text-align:center; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:20px; }
+  .live-standings { margin-top:auto; padding-top:16px; border-top:1px solid var(--ink-20); }
+  .standing-row { display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid var(--ink-10); }
+  .standing-row:last-child { border-bottom:none; }
+  .standing-rank { font-family:var(--mono); font-size:11px; color:var(--ink-60); width:18px; }
+  .standing-name { flex:1; font-size:13px; font-weight:500; }
+  .standing-wins { font-family:var(--mono); font-size:11px; color:var(--ink-60); }
+  .winner-hero { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px 0 32px; }
+  .winner-flag-lg { font-size:80px; line-height:1; margin-bottom:16px; }
+  .winner-eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--spice); margin-bottom:8px; }
+  .winner-name-lg { font-family:var(--serif); font-size:36px; color:var(--ink); letter-spacing:-0.02em; margin-bottom:8px; }
+  .winner-sub { font-family:var(--mono); font-size:11px; color:var(--ink-60); letter-spacing:0.04em; }
+  .results-header { margin-bottom:20px; }
+  .results-header h2 { font-family:var(--serif); font-size:26px; letter-spacing:-0.02em; margin-bottom:4px; }
+  .results-header p { font-family:var(--mono); font-size:11px; color:var(--ink-60); letter-spacing:0.04em; }
+  .scoreboard { display:flex; flex-direction:column; gap:6px; margin-bottom:24px; }
+  .score-row { display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--warm-white); border:1px solid var(--ink-20); border-radius:var(--radius-sm); }
+  .score-row.top { border-color:var(--gold); background:var(--gold-light); }
+  .score-rank { font-family:var(--mono); font-size:12px; color:var(--ink-60); min-width:22px; }
+  .score-row.top .score-rank { color:var(--gold); }
+  .score-name { flex:1; font-size:14px; font-weight:500; }
+  .score-bar-track { width:80px; height:3px; background:var(--ink-10); border-radius:2px; }
+  .score-bar-fill { height:100%; background:var(--ink-20); border-radius:2px; }
+  .score-row.top .score-bar-fill { background:var(--gold); }
+  .score-val { font-family:var(--mono); font-size:11px; color:var(--ink-60); min-width:40px; text-align:right; }
+  .bracket-scroll { overflow-x:auto; margin-bottom:24px; padding-bottom:8px; }
+  .bracket-wrap { display:flex; align-items:stretch; min-width:max-content; }
+  .bracket-round { display:flex; flex-direction:column; }
+  .round-label { font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-60); text-align:center; padding:0 12px 10px; }
+  .round-matches { display:flex; flex-direction:column; flex:1; justify-content:space-around; }
+  .match-wrap { display:flex; align-items:center; }
+  .bracket-match { display:flex; flex-direction:column; width:128px; margin-left:10px; }
+  .b-entry { font-size:11px; padding:5px 8px; border:1px solid var(--ink-20); background:var(--warm-white); color:var(--ink-60); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .b-entry:first-child { border-radius:4px 4px 0 0; border-bottom:none; }
+  .b-entry:last-child { border-radius:0 0 4px 4px; }
+  .b-entry.win { color:var(--ink); font-weight:500; background:var(--spice-light); border-color:rgba(196,66,10,0.25); }
+  .b-entry.bye { color:var(--ink-60); font-style:italic; }
+  .connector { display:flex; flex-direction:column; width:10px; flex-shrink:0; }
+  .conn-t { flex:1; border-right:1px solid var(--ink-20); border-bottom:1px solid var(--ink-20); }
+  .conn-b { flex:1; border-right:1px solid var(--ink-20); border-top:1px solid var(--ink-20); }
+  .champ-entry { font-family:var(--serif); font-size:14px; padding:7px 12px; border:1px solid var(--spice); background:var(--spice-light); color:var(--spice); border-radius:var(--radius-sm); margin-left:10px; white-space:nowrap; align-self:center; }
 </style>
-
-<div class="container">
-  <h2 class="sr-only">Cuisine ranker</h2>
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <h1>Cuisine Ranker</h1>
+    <span class="tagline">settle the debate</span>
+  </header>
 
   <div id="homeScreen" class="screen active">
-    <h2>Cuisine ranker</h2>
-    <p class="sub">Choose a category and a mode.</p>
-    <div class="section-label">Category</div>
+    <div class="label">Category</div>
     <div class="cat-grid" id="catGrid"></div>
-    <div class="section-label">Mode</div>
+    <div class="label">Mode</div>
     <div class="mode-grid">
-      <div class="mode-card" onclick="selectMode('survivor')" id="mode-survivor"><h3>Survivor</h3><p>Winner stays on and faces the next challenger. One cuisine left standing.</p></div>
-      <div class="mode-card" onclick="selectMode('tournament')" id="mode-tournament"><h3>Tournament</h3><p>Bracket-style knockout until one winner remains.</p></div>
-      <div class="mode-card" onclick="selectMode('roundrobin')" id="mode-roundrobin"><h3>Round robin</h3><p>Every cuisine faces every other cuisine. Full ranking at the end.</p></div>
+      <div class="mode-card" id="mode-survivor" onclick="selectMode('survivor')"><h3>Survivor</h3><p>Winner stays on. One cuisine left standing.</p></div>
+      <div class="mode-card" id="mode-tournament" onclick="selectMode('tournament')"><h3>Tournament</h3><p>Bracket knockout. One champion emerges.</p></div>
+      <div class="mode-card" id="mode-roundrobin" onclick="selectMode('roundrobin')"><h3>Round robin</h3><p>Every cuisine faces every other. Full ranking.</p></div>
     </div>
-    <button class="btn-primary" id="startBtn" onclick="startGame()" disabled>Start</button>
+    <div class="survivor-note" id="survivorNote">
+      Note: in survivor mode your favourite cuisine will keep winning once it appears. Try the random category to keep things unpredictable — you won't know what's coming next.
+    </div>
+    <button class="btn-start" id="startBtn" onclick="startGame()" disabled>Start ranking</button>
   </div>
 
   <div id="battleScreen" class="screen">
-    <button class="back-btn" onclick="goHome()">← Start over</button>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="status-line" id="statusLine"></div>
-    <div class="battle-area">
-      <button class="cuisine-btn" id="btnA" onclick="pick(0)"></button>
-      <div class="vs-divider">vs</div>
-      <button class="cuisine-btn" id="btnB" onclick="pick(1)"></button>
+    <button class="btn-back" onclick="goHome()">&#8592; start over</button>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="match-label" id="matchLabel"></div>
     </div>
-    <p style="font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 1.5rem;">Tap the cuisine you prefer</p>
-    <div id="rrLiveStandings" style="display:none;">
-      <p style="font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px;">Live standings</p>
-      <table class="rr-mini-table" id="rrTable"></table>
+    <div class="battle-area">
+      <button class="cuisine-btn" id="btnA" onclick="pick(0)">
+        <span class="btn-flag" id="flagA"></span>
+        <span class="btn-name" id="nameA"></span>
+      </button>
+      <div class="vs-col"><span class="vs-label">vs</span></div>
+      <button class="cuisine-btn" id="btnB" onclick="pick(1)">
+        <span class="btn-flag" id="flagB"></span>
+        <span class="btn-name" id="nameB"></span>
+      </button>
+    </div>
+    <div class="hint">tap the cuisine you prefer</div>
+    <div id="rrStandings" style="display:none;" class="live-standings">
+      <div class="label">Live standings</div>
+      <div id="standingsList"></div>
     </div>
   </div>
 
   <div id="resultsScreen" class="screen">
-    <div id="survivorResult" style="display:none;">
-      <h2>Your favourite cuisine</h2>
-      <p class="sub" id="survivorSub"></p>
-      <div class="winner-card" id="winnerCard"></div>
-      <button class="btn-primary" onclick="goHome()">Start over</button>
+    <div id="survivorResult" style="display:none;flex:1;flex-direction:column;">
+      <button class="btn-back" onclick="goHome()">&#8592; start over</button>
+      <div class="winner-hero">
+        <div class="winner-eyebrow" id="winnerEyebrow"></div>
+        <div class="winner-flag-lg" id="winnerFlag"></div>
+        <div class="winner-name-lg" id="winnerName"></div>
+        <div class="winner-sub" id="winnerSub"></div>
+      </div>
+      <button class="btn-secondary" onclick="goHome()">Play again</button>
     </div>
     <div id="tournamentResult" style="display:none;">
-      <h2>Tournament results</h2>
-      <p class="sub" id="tournSub"></p>
+      <button class="btn-back" onclick="goHome()">&#8592; start over</button>
+      <div class="results-header"><h2>Tournament bracket</h2><p id="tournSub"></p></div>
       <div class="bracket-scroll"><div class="bracket-wrap" id="bracketWrap"></div></div>
-      <button class="btn-primary" onclick="goHome()">Start over</button>
+      <button class="btn-secondary" onclick="goHome()">Play again</button>
     </div>
     <div id="rankingResult" style="display:none;">
-      <h2>Your cuisine ranking</h2>
-      <p class="sub" id="resultsSub"></p>
+      <button class="btn-back" onclick="goHome()">&#8592; start over</button>
+      <div class="results-header"><h2>Your ranking</h2><p id="rrSub"></p></div>
       <div class="scoreboard" id="scoreboardEl"></div>
-      <button class="btn-primary" onclick="goHome()">Start over</button>
+      <button class="btn-secondary" onclick="goHome()">Play again</button>
     </div>
   </div>
 </div>
 
 <script>
+// All cuisines across every category — pool for the random sampler
+const ALL_CUISINES = [
+  {name:"Japanese",flag:"🇯🇵"},{name:"Italian",flag:"🇮🇹"},{name:"Mexican",flag:"🇲🇽"},{name:"Chinese",flag:"🇨🇳"},
+  {name:"Indian",flag:"🇮🇳"},{name:"French",flag:"🇫🇷"},{name:"Thai",flag:"🇹🇭"},{name:"Greek",flag:"🇬🇷"},
+  {name:"Spanish",flag:"🇪🇸"},{name:"Lebanese",flag:"🇱🇧"},{name:"Korean",flag:"🇰🇷"},{name:"Vietnamese",flag:"🇻🇳"},
+  {name:"Turkish",flag:"🇹🇷"},{name:"Moroccan",flag:"🇲🇦"},{name:"Peruvian",flag:"🇵🇪"},{name:"Ethiopian",flag:"🇪🇹"},
+  {name:"Brazilian",flag:"🇧🇷"},{name:"Argentinian",flag:"🇦🇷"},{name:"Nigerian",flag:"🇳🇬"},{name:"Egyptian",flag:"🇪🇬"},
+  {name:"Iranian",flag:"🇮🇷"},{name:"Pakistani",flag:"🇵🇰"},{name:"Indonesian",flag:"🇮🇩"},{name:"Filipino",flag:"🇵🇭"},
+  {name:"Singaporean",flag:"🇸🇬"},{name:"Georgian",flag:"🇬🇪"},{name:"Uzbek",flag:"🇺🇿"},{name:"Caribbean",flag:"🌊"},
+  {name:"Portuguese",flag:"🇵🇹"},{name:"German",flag:"🇩🇪"},{name:"British",flag:"🇬🇧"},{name:"Dutch",flag:"🇳🇱"},
+  {name:"Belgian",flag:"🇧🇪"},{name:"Swiss",flag:"🇨🇭"},{name:"Austrian",flag:"🇦🇹"},{name:"Polish",flag:"🇵🇱"},
+  {name:"Czech",flag:"🇨🇿"},{name:"Hungarian",flag:"🇭🇺"},{name:"Swedish",flag:"🇸🇪"},{name:"Norwegian",flag:"🇳🇴"},
+  {name:"Danish",flag:"🇩🇰"},{name:"Russian",flag:"🇷🇺"},{name:"Malaysian",flag:"🇲🇾"},{name:"Bangladeshi",flag:"🇧🇩"},
+  {name:"Sri Lankan",flag:"🇱🇰"},{name:"Burmese",flag:"🇲🇲"},{name:"Cambodian",flag:"🇰🇭"},{name:"Taiwanese",flag:"🇹🇼"},
+  {name:"South African",flag:"🇿🇦"},{name:"Ghanaian",flag:"🇬🇭"},{name:"Senegalese",flag:"🇸🇳"},{name:"Tunisian",flag:"🇹🇳"},
+  {name:"Tanzanian",flag:"🇹🇿"},{name:"Kenyan",flag:"🇰🇪"},{name:"Algerian",flag:"🇩🇿"},{name:"Cameroonian",flag:"🇨🇲"},
+  {name:"Ivorian",flag:"🇨🇮"},{name:"Malagasy",flag:"🇲🇬"},{name:"Colombian",flag:"🇨🇴"},{name:"Chilean",flag:"🇨🇱"},
+  {name:"Venezuelan",flag:"🇻🇪"},{name:"Bolivian",flag:"🇧🇴"},{name:"Ecuadorian",flag:"🇪🇨"},{name:"Uruguayan",flag:"🇺🇾"},
+  {name:"Paraguayan",flag:"🇵🇾"},{name:"Guyanese",flag:"🇬🇾"},{name:"Surinamese",flag:"🇸🇷"},
+];
+
 const CATEGORY_DATA = {
-  world: {
-    label: 'World', desc: '16 iconic global cuisines',
-    cuisines: [
-      {name:"Japanese",flag:"🇯🇵"},{name:"Italian",flag:"🇮🇹"},{name:"Mexican",flag:"🇲🇽"},{name:"Chinese",flag:"🇨🇳"},
-      {name:"Indian",flag:"🇮🇳"},{name:"French",flag:"🇫🇷"},{name:"Thai",flag:"🇹🇭"},{name:"Greek",flag:"🇬🇷"},
-      {name:"Spanish",flag:"🇪🇸"},{name:"Lebanese",flag:"🇱🇧"},{name:"Korean",flag:"🇰🇷"},{name:"Vietnamese",flag:"🇻🇳"},
-      {name:"Turkish",flag:"🇹🇷"},{name:"Moroccan",flag:"🇲🇦"},{name:"Peruvian",flag:"🇵🇪"},{name:"Ethiopian",flag:"🇪🇹"},
-    ]
-  },
-  world_ext: {
-    label: 'World extended', desc: '28 cuisines, broader coverage',
-    cuisines: [
-      {name:"Japanese",flag:"🇯🇵"},{name:"Italian",flag:"🇮🇹"},{name:"Mexican",flag:"🇲🇽"},{name:"Chinese",flag:"🇨🇳"},
-      {name:"Indian",flag:"🇮🇳"},{name:"French",flag:"🇫🇷"},{name:"Thai",flag:"🇹🇭"},{name:"Greek",flag:"🇬🇷"},
-      {name:"Spanish",flag:"🇪🇸"},{name:"Lebanese",flag:"🇱🇧"},{name:"Korean",flag:"🇰🇷"},{name:"Vietnamese",flag:"🇻🇳"},
-      {name:"Turkish",flag:"🇹🇷"},{name:"Moroccan",flag:"🇲🇦"},{name:"Peruvian",flag:"🇵🇪"},{name:"Ethiopian",flag:"🇪🇹"},
-      {name:"Brazilian",flag:"🇧🇷"},{name:"Argentinian",flag:"🇦🇷"},{name:"Nigerian",flag:"🇳🇬"},{name:"Egyptian",flag:"🇪🇬"},
-      {name:"Iranian",flag:"🇮🇷"},{name:"Pakistani",flag:"🇵🇰"},{name:"Indonesian",flag:"🇮🇩"},{name:"Filipino",flag:"🇵🇭"},
-      {name:"Singaporean",flag:"🇸🇬"},{name:"Georgian",flag:"🇬🇪"},{name:"Uzbek",flag:"🇺🇿"},{name:"Caribbean",flag:"🌊"},
-    ]
-  },
-  european: {
-    label: 'European', desc: '20 European cuisines',
-    cuisines: [
-      {name:"Italian",flag:"🇮🇹"},{name:"French",flag:"🇫🇷"},{name:"Spanish",flag:"🇪🇸"},{name:"Greek",flag:"🇬🇷"},
-      {name:"Portuguese",flag:"🇵🇹"},{name:"German",flag:"🇩🇪"},{name:"British",flag:"🇬🇧"},{name:"Dutch",flag:"🇳🇱"},
-      {name:"Belgian",flag:"🇧🇪"},{name:"Swiss",flag:"🇨🇭"},{name:"Austrian",flag:"🇦🇹"},{name:"Polish",flag:"🇵🇱"},
-      {name:"Czech",flag:"🇨🇿"},{name:"Hungarian",flag:"🇭🇺"},{name:"Swedish",flag:"🇸🇪"},{name:"Norwegian",flag:"🇳🇴"},
-      {name:"Danish",flag:"🇩🇰"},{name:"Russian",flag:"🇷🇺"},{name:"Turkish",flag:"🇹🇷"},{name:"Georgian",flag:"🇬🇪"},
-    ]
-  },
-  asian: {
-    label: 'Asian', desc: '16 Asian cuisines',
-    cuisines: [
-      {name:"Japanese",flag:"🇯🇵"},{name:"Chinese",flag:"🇨🇳"},{name:"Korean",flag:"🇰🇷"},{name:"Thai",flag:"🇹🇭"},
-      {name:"Vietnamese",flag:"🇻🇳"},{name:"Indian",flag:"🇮🇳"},{name:"Indonesian",flag:"🇮🇩"},{name:"Filipino",flag:"🇵🇭"},
-      {name:"Malaysian",flag:"🇲🇾"},{name:"Singaporean",flag:"🇸🇬"},{name:"Pakistani",flag:"🇵🇰"},{name:"Bangladeshi",flag:"🇧🇩"},
-      {name:"Sri Lankan",flag:"🇱🇰"},{name:"Burmese",flag:"🇲🇲"},{name:"Cambodian",flag:"🇰🇭"},{name:"Taiwanese",flag:"🇹🇼"},
-    ]
-  },
-  african: {
-    label: 'African', desc: '14 African cuisines',
-    cuisines: [
-      {name:"Ethiopian",flag:"🇪🇹"},{name:"Moroccan",flag:"🇲🇦"},{name:"Nigerian",flag:"🇳🇬"},{name:"Egyptian",flag:"🇪🇬"},
-      {name:"South African",flag:"🇿🇦"},{name:"Ghanaian",flag:"🇬🇭"},{name:"Senegalese",flag:"🇸🇳"},{name:"Tunisian",flag:"🇹🇳"},
-      {name:"Tanzanian",flag:"🇹🇿"},{name:"Kenyan",flag:"🇰🇪"},{name:"Algerian",flag:"🇩🇿"},{name:"Cameroonian",flag:"🇨🇲"},
-      {name:"Ivorian",flag:"🇨🇮"},{name:"Malagasy",flag:"🇲🇬"},
-    ]
-  },
-  south_american: {
-    label: 'South American', desc: '12 South American cuisines',
-    cuisines: [
-      {name:"Brazilian",flag:"🇧🇷"},{name:"Peruvian",flag:"🇵🇪"},{name:"Argentinian",flag:"🇦🇷"},{name:"Colombian",flag:"🇨🇴"},
-      {name:"Chilean",flag:"🇨🇱"},{name:"Venezuelan",flag:"🇻🇪"},{name:"Bolivian",flag:"🇧🇴"},{name:"Ecuadorian",flag:"🇪🇨"},
-      {name:"Uruguayan",flag:"🇺🇾"},{name:"Paraguayan",flag:"🇵🇾"},{name:"Guyanese",flag:"🇬🇾"},{name:"Surinamese",flag:"🇸🇷"},
-    ]
-  },
+  random:        { label:'Random',         icon:'🎲', desc:'20 random cuisines', cuisines:[] }, // filled at start
+  world:         { label:'World',          icon:'🌍', desc:'16 cuisines', cuisines:[
+    {name:"Japanese",flag:"🇯🇵"},{name:"Italian",flag:"🇮🇹"},{name:"Mexican",flag:"🇲🇽"},{name:"Chinese",flag:"🇨🇳"},
+    {name:"Indian",flag:"🇮🇳"},{name:"French",flag:"🇫🇷"},{name:"Thai",flag:"🇹🇭"},{name:"Greek",flag:"🇬🇷"},
+    {name:"Spanish",flag:"🇪🇸"},{name:"Lebanese",flag:"🇱🇧"},{name:"Korean",flag:"🇰🇷"},{name:"Vietnamese",flag:"🇻🇳"},
+    {name:"Turkish",flag:"🇹🇷"},{name:"Moroccan",flag:"🇲🇦"},{name:"Peruvian",flag:"🇵🇪"},{name:"Ethiopian",flag:"🇪🇹"},
+  ]},
+  world_ext:     { label:'World extended', icon:'🌐', desc:'28 cuisines', cuisines:[
+    {name:"Japanese",flag:"🇯🇵"},{name:"Italian",flag:"🇮🇹"},{name:"Mexican",flag:"🇲🇽"},{name:"Chinese",flag:"🇨🇳"},
+    {name:"Indian",flag:"🇮🇳"},{name:"French",flag:"🇫🇷"},{name:"Thai",flag:"🇹🇭"},{name:"Greek",flag:"🇬🇷"},
+    {name:"Spanish",flag:"🇪🇸"},{name:"Lebanese",flag:"🇱🇧"},{name:"Korean",flag:"🇰🇷"},{name:"Vietnamese",flag:"🇻🇳"},
+    {name:"Turkish",flag:"🇹🇷"},{name:"Moroccan",flag:"🇲🇦"},{name:"Peruvian",flag:"🇵🇪"},{name:"Ethiopian",flag:"🇪🇹"},
+    {name:"Brazilian",flag:"🇧🇷"},{name:"Argentinian",flag:"🇦🇷"},{name:"Nigerian",flag:"🇳🇬"},{name:"Egyptian",flag:"🇪🇬"},
+    {name:"Iranian",flag:"🇮🇷"},{name:"Pakistani",flag:"🇵🇰"},{name:"Indonesian",flag:"🇮🇩"},{name:"Filipino",flag:"🇵🇭"},
+    {name:"Singaporean",flag:"🇸🇬"},{name:"Georgian",flag:"🇬🇪"},{name:"Uzbek",flag:"🇺🇿"},{name:"Caribbean",flag:"🌊"},
+  ]},
+  european:      { label:'European',       icon:'🇪🇺', desc:'20 cuisines', cuisines:[
+    {name:"Italian",flag:"🇮🇹"},{name:"French",flag:"🇫🇷"},{name:"Spanish",flag:"🇪🇸"},{name:"Greek",flag:"🇬🇷"},
+    {name:"Portuguese",flag:"🇵🇹"},{name:"German",flag:"🇩🇪"},{name:"British",flag:"🇬🇧"},{name:"Dutch",flag:"🇳🇱"},
+    {name:"Belgian",flag:"🇧🇪"},{name:"Swiss",flag:"🇨🇭"},{name:"Austrian",flag:"🇦🇹"},{name:"Polish",flag:"🇵🇱"},
+    {name:"Czech",flag:"🇨🇿"},{name:"Hungarian",flag:"🇭🇺"},{name:"Swedish",flag:"🇸🇪"},{name:"Norwegian",flag:"🇳🇴"},
+    {name:"Danish",flag:"🇩🇰"},{name:"Russian",flag:"🇷🇺"},{name:"Turkish",flag:"🇹🇷"},{name:"Georgian",flag:"🇬🇪"},
+  ]},
+  asian:         { label:'Asian',          icon:'🌏', desc:'16 cuisines', cuisines:[
+    {name:"Japanese",flag:"🇯🇵"},{name:"Chinese",flag:"🇨🇳"},{name:"Korean",flag:"🇰🇷"},{name:"Thai",flag:"🇹🇭"},
+    {name:"Vietnamese",flag:"🇻🇳"},{name:"Indian",flag:"🇮🇳"},{name:"Indonesian",flag:"🇮🇩"},{name:"Filipino",flag:"🇵🇭"},
+    {name:"Malaysian",flag:"🇲🇾"},{name:"Singaporean",flag:"🇸🇬"},{name:"Pakistani",flag:"🇵🇰"},{name:"Bangladeshi",flag:"🇧🇩"},
+    {name:"Sri Lankan",flag:"🇱🇰"},{name:"Burmese",flag:"🇲🇲"},{name:"Cambodian",flag:"🇰🇭"},{name:"Taiwanese",flag:"🇹🇼"},
+  ]},
+  african:       { label:'African',        icon:'🌍', desc:'14 cuisines', cuisines:[
+    {name:"Ethiopian",flag:"🇪🇹"},{name:"Moroccan",flag:"🇲🇦"},{name:"Nigerian",flag:"🇳🇬"},{name:"Egyptian",flag:"🇪🇬"},
+    {name:"South African",flag:"🇿🇦"},{name:"Ghanaian",flag:"🇬🇭"},{name:"Senegalese",flag:"🇸🇳"},{name:"Tunisian",flag:"🇹🇳"},
+    {name:"Tanzanian",flag:"🇹🇿"},{name:"Kenyan",flag:"🇰🇪"},{name:"Algerian",flag:"🇩🇿"},{name:"Cameroonian",flag:"🇨🇲"},
+    {name:"Ivorian",flag:"🇨🇮"},{name:"Malagasy",flag:"🇲🇬"},
+  ]},
+  south_american:{ label:'South American', icon:'🌎', desc:'12 cuisines', cuisines:[
+    {name:"Brazilian",flag:"🇧🇷"},{name:"Peruvian",flag:"🇵🇪"},{name:"Argentinian",flag:"🇦🇷"},{name:"Colombian",flag:"🇨🇴"},
+    {name:"Chilean",flag:"🇨🇱"},{name:"Venezuelan",flag:"🇻🇪"},{name:"Bolivian",flag:"🇧🇴"},{name:"Ecuadorian",flag:"🇪🇨"},
+    {name:"Uruguayan",flag:"🇺🇾"},{name:"Paraguayan",flag:"🇵🇾"},{name:"Guyanese",flag:"🇬🇾"},{name:"Surinamese",flag:"🇸🇷"},
+  ]},
 };
 
-// Build category cards dynamically
+// Build category cards — random first with dashed border
 const catGrid = document.getElementById('catGrid');
-Object.entries(CATEGORY_DATA).forEach(([key, cat]) => {
-  const card = document.createElement('div');
-  card.className = 'cat-card';
-  card.id = 'cat-' + key;
-  card.onclick = () => selectCat(key);
-  card.innerHTML = '<h3>' + cat.label + '</h3><p>' + cat.desc + '</p>';
-  catGrid.appendChild(card);
+Object.entries(CATEGORY_DATA).forEach(([key,cat]) => {
+  const el = document.createElement('div');
+  el.className = 'cat-card' + (key === 'random' ? ' random-card' : '');
+  el.id = 'cat-' + key;
+  el.onclick = () => selectCat(key);
+  el.innerHTML = '<span class="cat-icon">' + cat.icon + '</span><h3>' + cat.label + '</h3><p>' + cat.desc + '</p>';
+  catGrid.appendChild(el);
 });
 
 let selectedCat=null, selectedMode=null, CUISINES=[], scores={}, mode=null;
@@ -201,290 +262,245 @@ let currentRoundMatches, nextRoundPool, tournMatchIndex, tournTotalMatches, tour
 let rrMatchups, rrMatchIndex, rrTotal;
 let bracketRounds=[], currentBracketRound=[];
 
-function selectCat(c) {
-  selectedCat=c;
-  document.querySelectorAll('.cat-card').forEach(el=>el.classList.remove('selected'));
-  document.getElementById('cat-'+c).classList.add('selected');
-  updateStartBtn();
-}
-function selectMode(m) {
-  selectedMode=m;
-  document.querySelectorAll('.mode-card').forEach(el=>el.classList.remove('selected'));
-  document.getElementById('mode-'+m).classList.add('selected');
-  updateStartBtn();
-}
-function updateStartBtn() {
-  document.getElementById('startBtn').disabled=!(selectedCat&&selectedMode);
-}
 function shuffle(arr) {
-  const a=[...arr];
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
-function showScreen(id) {
-  ['homeScreen','battleScreen','resultsScreen'].forEach(s=>{
-    const el=document.getElementById(s);
-    el.classList.remove('active');el.style.display='none';
-  });
-  const t=document.getElementById(id);
-  t.classList.add('active');t.style.display='block';
+
+function selectCat(c) {
+  selectedCat = c;
+  document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('cat-' + c).classList.add('selected');
+  updateStartBtn();
 }
-function goHome(){showScreen('homeScreen');}
+
+function selectMode(m) {
+  selectedMode = m;
+  document.querySelectorAll('.mode-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('mode-' + m).classList.add('selected');
+  // Show survivor hint whenever survivor is selected
+  document.getElementById('survivorNote').classList.toggle('visible', m === 'survivor');
+  updateStartBtn();
+}
+
+function updateStartBtn() {
+  document.getElementById('startBtn').disabled = !(selectedCat && selectedMode);
+}
+
+function showScreen(id) {
+  ['homeScreen','battleScreen','resultsScreen'].forEach(s => {
+    const el = document.getElementById(s); el.classList.remove('active'); el.style.display = 'none';
+  });
+  const t = document.getElementById(id); t.classList.add('active'); t.style.display = 'flex';
+}
+
+function goHome() { showScreen('homeScreen'); }
 
 function startGame() {
-  CUISINES=CATEGORY_DATA[selectedCat].cuisines;
-  mode=selectedMode;
-  scores={};
-  CUISINES.forEach(c=>{scores[c.name]=0;});
-  if(mode==='survivor'){
-    const order=shuffle([...CUISINES]);
-    survivorCurrent=order[0];survivorQueue=order.slice(1);
-    survivorMatchIndex=0;survivorTotal=survivorQueue.length;
-    document.getElementById('rrLiveStandings').style.display='none';
-    showScreen('battleScreen');renderSurvivor();
-  } else if(mode==='tournament'){
+  // For random: sample 20 unique cuisines from the full pool each time
+  if (selectedCat === 'random') {
+    CATEGORY_DATA.random.cuisines = shuffle([...ALL_CUISINES]).slice(0, 20);
+  }
+  CUISINES = CATEGORY_DATA[selectedCat].cuisines;
+  mode = selectedMode;
+  scores = {};
+  CUISINES.forEach(c => { scores[c.name] = 0; });
+
+  if (mode === 'survivor') {
+    const order = shuffle([...CUISINES]);
+    survivorCurrent = order[0]; survivorQueue = order.slice(1);
+    survivorMatchIndex = 0; survivorTotal = survivorQueue.length;
+    document.getElementById('rrStandings').style.display = 'none';
+    showScreen('battleScreen'); renderSurvivor();
+  } else if (mode === 'tournament') {
     initTournament();
-    document.getElementById('rrLiveStandings').style.display='none';
-    showScreen('battleScreen');renderTournament();
+    document.getElementById('rrStandings').style.display = 'none';
+    showScreen('battleScreen'); renderTournament();
   } else {
     initRoundRobin();
-    document.getElementById('rrLiveStandings').style.display='block';
-    showScreen('battleScreen');renderRoundRobin();
+    document.getElementById('rrStandings').style.display = 'flex';
+    showScreen('battleScreen'); renderRoundRobin();
   }
+}
+
+function setProgress(done, total) {
+  document.getElementById('progressFill').style.width = Math.round((done/total)*100) + '%';
+}
+function setButtons(a, b) {
+  document.getElementById('flagA').textContent = a.flag; document.getElementById('nameA').textContent = a.name;
+  document.getElementById('flagB').textContent = b.flag; document.getElementById('nameB').textContent = b.name;
 }
 
 function renderSurvivor() {
-  const challenger=survivorQueue[survivorMatchIndex];
-  const pct=Math.round((survivorMatchIndex/survivorTotal)*100);
-  document.getElementById('progressFill').style.width=pct+'%';
-  document.getElementById('statusLine').textContent='Match '+(survivorMatchIndex+1)+' of '+survivorTotal;
-  setButtons(survivorCurrent,challenger);
+  const ch = survivorQueue[survivorMatchIndex];
+  setProgress(survivorMatchIndex, survivorTotal);
+  document.getElementById('matchLabel').textContent = 'Match ' + (survivorMatchIndex+1) + ' of ' + survivorTotal;
+  setButtons(survivorCurrent, ch);
 }
 
 function initTournament() {
-  const pool=shuffle([...CUISINES]);
-  tournMatchIndex=0;tournRoundNumber=1;nextRoundPool=[];
-  bracketRounds=[];currentBracketRound=[];
-  let size=1;
-  while(size<pool.length)size*=2;
-  const padded=[...pool];
-  while(padded.length<size)padded.push(null);
+  const pool = shuffle([...CUISINES]);
+  tournMatchIndex=0; tournRoundNumber=1; nextRoundPool=[]; bracketRounds=[]; currentBracketRound=[];
+  let size=1; while(size<pool.length) size*=2;
+  const padded=[...pool]; while(padded.length<size) padded.push(null);
   currentRoundMatches=[];
-  const autoAdvance=[];
-  for(let i=0;i<padded.length;i+=2){
-    const a=padded[i],b=padded[i+1];
-    if(!a){if(b)autoAdvance.push(b);continue;}
-    if(!b){autoAdvance.push(a);currentBracketRound.push({a,b:null,winner:a,bye:true});continue;}
+  for (let i=0; i<padded.length; i+=2) {
+    const a=padded[i], b=padded[i+1];
+    if (!a) { if (b) nextRoundPool.push(b); continue; }
+    if (!b) { nextRoundPool.push(a); currentBracketRound.push({a,b:null,winner:a,bye:true}); continue; }
     currentRoundMatches.push([a,b]);
   }
-  nextRoundPool=[...autoAdvance];
-  tournRoundSize=currentRoundMatches.length;
-  tournTotalMatches=CUISINES.length-1;
+  tournRoundSize = currentRoundMatches.length;
+  tournTotalMatches = CUISINES.length - 1;
 }
 
 function renderTournament() {
-  const pct=Math.round((tournMatchIndex/tournTotalMatches)*100);
-  document.getElementById('progressFill').style.width=pct+'%';
-  const remaining=tournTotalMatches-tournMatchIndex;
-  const label=remaining===1?'Final':remaining===2?'Semi-final':remaining<=4?'Quarter-final':'Round '+tournRoundNumber;
-  const matchInRound=tournRoundSize-currentRoundMatches.length+1;
-  document.getElementById('statusLine').textContent=label+' — match '+matchInRound+' of '+tournRoundSize;
-  setButtons(currentRoundMatches[0][0],currentRoundMatches[0][1]);
+  setProgress(tournMatchIndex, tournTotalMatches);
+  const remaining = tournTotalMatches - tournMatchIndex;
+  const label = remaining===1?'Final':remaining===2?'Semi-final':remaining<=4?'Quarter-final':'Round '+tournRoundNumber;
+  document.getElementById('matchLabel').textContent = label + ' — match ' + (tournRoundSize-currentRoundMatches.length+1) + ' of ' + tournRoundSize;
+  setButtons(currentRoundMatches[0][0], currentRoundMatches[0][1]);
 }
 
 function initRoundRobin() {
-  rrMatchups=[];
-  for(let i=0;i<CUISINES.length;i++)
-    for(let j=i+1;j<CUISINES.length;j++)
-      rrMatchups.push([CUISINES[i],CUISINES[j]]);
-  rrMatchups=shuffle(rrMatchups);
-  rrMatchIndex=0;rrTotal=rrMatchups.length;
+  rrMatchups = [];
+  for (let i=0; i<CUISINES.length; i++)
+    for (let j=i+1; j<CUISINES.length; j++)
+      rrMatchups.push([CUISINES[i], CUISINES[j]]);
+  rrMatchups = shuffle(rrMatchups);
+  rrMatchIndex = 0; rrTotal = rrMatchups.length;
 }
+
 function renderRoundRobin() {
-  const pct=Math.round((rrMatchIndex/rrTotal)*100);
-  document.getElementById('progressFill').style.width=pct+'%';
-  document.getElementById('statusLine').textContent='Match '+(rrMatchIndex+1)+' of '+rrTotal;
-  setButtons(rrMatchups[rrMatchIndex][0],rrMatchups[rrMatchIndex][1]);
-  updateRRTable();
+  setProgress(rrMatchIndex, rrTotal);
+  document.getElementById('matchLabel').textContent = 'Match ' + (rrMatchIndex+1) + ' of ' + rrTotal;
+  setButtons(rrMatchups[rrMatchIndex][0], rrMatchups[rrMatchIndex][1]);
+  updateStandings();
 }
-function updateRRTable() {
-  const sorted=[...CUISINES].map(c=>({...c,w:scores[c.name]})).sort((a,b)=>b.w-a.w).slice(0,5);
-  const table=document.getElementById('rrTable');
-  table.innerHTML='<tr><th>#</th><th>Cuisine</th><th>Wins</th></tr>'+
-    sorted.map((c,i)=>'<tr class="'+(i===0&&rrMatchIndex>0?'rr-leader':'')+'"><td>'+(i+1)+'</td><td>'+c.flag+' '+c.name+'</td><td>'+c.w+'</td></tr>').join('');
-}
-function setButtons(a,b) {
-  document.getElementById('btnA').innerHTML='<span class="flag">'+a.flag+'</span>'+a.name;
-  document.getElementById('btnB').innerHTML='<span class="flag">'+b.flag+'</span>'+b.name;
+
+function updateStandings() {
+  const sorted = [...CUISINES].map(c => ({...c,w:scores[c.name]})).sort((a,b)=>b.w-a.w).slice(0,5);
+  document.getElementById('standingsList').innerHTML = sorted.map((c,i) =>
+    '<div class="standing-row"><span class="standing-rank">'+(i+1)+'</span><span class="standing-name">'+c.flag+' '+c.name+'</span><span class="standing-wins">'+c.w+' W</span></div>'
+  ).join('');
 }
 
 function pick(idx) {
-  if(mode==='survivor'){
-    const challenger=survivorQueue[survivorMatchIndex];
-    const winner=idx===0?survivorCurrent:challenger;
-    scores[winner.name]+=2;
-    survivorCurrent=winner;survivorMatchIndex++;
-    if(survivorMatchIndex>=survivorTotal)showResults();
-    else renderSurvivor();
-  } else if(mode==='tournament'){
-    const match=currentRoundMatches.shift();
-    const winner=match[idx],loser=match[1-idx];
-    scores[winner.name]=(scores[winner.name]||0)+1;
+  if (mode === 'survivor') {
+    const ch = survivorQueue[survivorMatchIndex];
+    const winner = idx===0 ? survivorCurrent : ch;
+    scores[winner.name] += 2; survivorCurrent = winner; survivorMatchIndex++;
+    if (survivorMatchIndex >= survivorTotal) showResults(); else renderSurvivor();
+  } else if (mode === 'tournament') {
+    const match = currentRoundMatches.shift();
+    const winner = match[idx];
+    scores[winner.name] = (scores[winner.name]||0) + 1;
     currentBracketRound.push({a:match[0],b:match[1],winner,bye:false});
-    tournMatchIndex++;
-    nextRoundPool.push(winner);
-    if(currentRoundMatches.length===0){
-      bracketRounds.push([...currentBracketRound]);
-      currentBracketRound=[];
-      if(nextRoundPool.length===1){showResults();return;}
+    tournMatchIndex++; nextRoundPool.push(winner);
+    if (currentRoundMatches.length === 0) {
+      bracketRounds.push([...currentBracketRound]); currentBracketRound=[];
+      if (nextRoundPool.length === 1) { showResults(); return; }
       tournRoundNumber++;
-      const pool=[...nextRoundPool];
-      nextRoundPool=[];currentRoundMatches=[];
-      for(let i=0;i<pool.length;i+=2){
-        if(i+1<pool.length)currentRoundMatches.push([pool[i],pool[i+1]]);
-        else{nextRoundPool.push(pool[i]);currentBracketRound.push({a:pool[i],b:null,winner:pool[i],bye:true});}
+      const pool = [...nextRoundPool]; nextRoundPool=[]; currentRoundMatches=[];
+      for (let i=0; i<pool.length; i+=2) {
+        if (i+1 < pool.length) currentRoundMatches.push([pool[i],pool[i+1]]);
+        else { nextRoundPool.push(pool[i]); currentBracketRound.push({a:pool[i],b:null,winner:pool[i],bye:true}); }
       }
-      tournRoundSize=currentRoundMatches.length;
+      tournRoundSize = currentRoundMatches.length;
     }
-    if(tournMatchIndex>=tournTotalMatches)showResults();
-    else renderTournament();
+    if (tournMatchIndex >= tournTotalMatches) showResults(); else renderTournament();
   } else {
-    const match=rrMatchups[rrMatchIndex];
-    scores[match[idx].name]=(scores[match[idx].name]||0)+1;
+    const match = rrMatchups[rrMatchIndex];
+    scores[match[idx].name] = (scores[match[idx].name]||0) + 1;
     rrMatchIndex++;
-    if(rrMatchIndex>=rrTotal)showResults();
-    else renderRoundRobin();
+    if (rrMatchIndex >= rrTotal) showResults(); else renderRoundRobin();
   }
 }
 
 function showResults() {
   showScreen('resultsScreen');
-  const catLabel=CATEGORY_DATA[selectedCat].label;
-  if(mode==='survivor'){
-    document.getElementById('survivorResult').style.display='block';
-    document.getElementById('tournamentResult').style.display='none';
-    document.getElementById('rankingResult').style.display='none';
-    document.getElementById('survivorSub').textContent=catLabel+' — '+survivorTotal+' challengers defeated.';
-    document.getElementById('winnerCard').innerHTML=
-      '<span class="winner-flag">'+survivorCurrent.flag+'</span>'+
-      '<div class="winner-name">'+survivorCurrent.name+'</div>'+
-      '<div class="winner-label">Your favourite cuisine</div>';
-  } else if(mode==='tournament'){
-    document.getElementById('survivorResult').style.display='none';
+  const catLabel = CATEGORY_DATA[selectedCat].label;
+  document.getElementById('survivorResult').style.display='none';
+  document.getElementById('tournamentResult').style.display='none';
+  document.getElementById('rankingResult').style.display='none';
+
+  if (mode === 'survivor') {
+    document.getElementById('survivorResult').style.display='flex';
+    document.getElementById('winnerEyebrow').textContent = catLabel + ' — survivor';
+    document.getElementById('winnerFlag').textContent = survivorCurrent.flag;
+    document.getElementById('winnerName').textContent = survivorCurrent.name;
+    document.getElementById('winnerSub').textContent = survivorTotal + ' challengers defeated';
+  } else if (mode === 'tournament') {
     document.getElementById('tournamentResult').style.display='block';
-    document.getElementById('rankingResult').style.display='none';
-    document.getElementById('tournSub').textContent=catLabel+' — '+tournTotalMatches+' matches played.';
+    document.getElementById('tournSub').textContent = catLabel + ' — ' + tournTotalMatches + ' matches played';
     renderBracket();
   } else {
-    document.getElementById('survivorResult').style.display='none';
-    document.getElementById('tournamentResult').style.display='none';
     document.getElementById('rankingResult').style.display='block';
-    const sorted=CUISINES.map(c=>({...c,score:scores[c.name]||0})).sort((a,b)=>b.score-a.score);
-    document.getElementById('resultsSub').textContent=catLabel+' — all '+rrTotal+' possible matchups.';
-    const maxScore=sorted[0]?sorted[0].score:1;
-    const el=document.getElementById('scoreboardEl');
-    el.innerHTML='';
-    sorted.forEach((c,i)=>{
-      const row=document.createElement('div');
-      row.className='score-row';
-      const rankClass='score-rank'+(i===0?' gold':i===1?' silver':i===2?' bronze':'');
-      const barPct=Math.round((c.score/maxScore)*100);
-      row.innerHTML='<div class="'+rankClass+'">#'+(i+1)+'</div>'+
-        '<div class="score-name">'+c.flag+' '+c.name+'</div>'+
-        '<div class="score-bar-wrap"><div class="score-bar" style="width:'+barPct+'%"></div></div>'+
-        '<div class="score-val">'+c.score+' win'+(c.score!==1?'s':'')+'</div>';
+    const sorted = CUISINES.map(c=>({...c,score:scores[c.name]||0})).sort((a,b)=>b.score-a.score);
+    document.getElementById('rrSub').textContent = catLabel + ' — all ' + rrTotal + ' matchups';
+    const maxScore = sorted[0] ? sorted[0].score : 1;
+    const el = document.getElementById('scoreboardEl'); el.innerHTML='';
+    sorted.forEach((c,i) => {
+      const row = document.createElement('div');
+      row.className = 'score-row' + (i===0?' top':'');
+      const barPct = Math.round((c.score/maxScore)*100);
+      row.innerHTML = '<span class="score-rank">#'+(i+1)+'</span><span class="score-name">'+c.flag+' '+c.name+'</span><div class="score-bar-track"><div class="score-bar-fill" style="width:'+barPct+'%"></div></div><span class="score-val">'+c.score+' W</span>';
       el.appendChild(row);
     });
   }
 }
 
 function renderBracket() {
-  const wrap=document.getElementById('bracketWrap');
-  wrap.innerHTML='';
-  const roundLabels=bracketRounds.map((r,i)=>{
-    const remaining=bracketRounds.length-i;
-    if(remaining===1)return'Final';
-    if(remaining===2)return'Semi-final';
-    if(remaining===3)return'Quarter-final';
-    return'Round '+(i+1);
+  const wrap = document.getElementById('bracketWrap'); wrap.innerHTML='';
+  const labels = bracketRounds.map((_,i) => {
+    const r = bracketRounds.length-i;
+    return r===1?'Final':r===2?'Semi-final':r===3?'Quarter-final':'Round '+(i+1);
   });
-  const maxSlots=bracketRounds[0]?bracketRounds[0].length:1;
-  const slotH=52;
-  const totalH=maxSlots*slotH;
-  bracketRounds.forEach((round,ri)=>{
-    const roundEl=document.createElement('div');
-    roundEl.className='bracket-round';
-    roundEl.style.minHeight=totalH+'px';
-    const header=document.createElement('div');
-    header.className='round-header';
-    header.textContent=roundLabels[ri];
-    roundEl.appendChild(header);
-    const matchesEl=document.createElement('div');
-    matchesEl.className='round-matches';
-    matchesEl.style.height=(totalH-28)+'px';
-    round.forEach(match=>{
-      const mwrap=document.createElement('div');
-      mwrap.className='bracket-match-wrap';
-      if(ri>0){
-        const conn=document.createElement('div');
-        conn.className='connector';
-        const top=document.createElement('div');top.className='conn-top';
-        const bot=document.createElement('div');bot.className='conn-bot';
-        conn.appendChild(top);conn.appendChild(bot);
-        mwrap.appendChild(conn);
+  const maxSlots = bracketRounds[0] ? bracketRounds[0].length : 1;
+  const totalH = maxSlots * 54;
+  bracketRounds.forEach((round, ri) => {
+    const rEl = document.createElement('div'); rEl.className='bracket-round'; rEl.style.minHeight=totalH+'px';
+    const lEl = document.createElement('div'); lEl.className='round-label'; lEl.textContent=labels[ri]; rEl.appendChild(lEl);
+    const mEl = document.createElement('div'); mEl.className='round-matches'; mEl.style.height=(totalH-24)+'px';
+    round.forEach(match => {
+      const mw = document.createElement('div'); mw.className='match-wrap';
+      if (ri > 0) {
+        const c=document.createElement('div');c.className='connector';
+        const t=document.createElement('div');t.className='conn-t';
+        const b=document.createElement('div');b.className='conn-b';
+        c.appendChild(t);c.appendChild(b);mw.appendChild(c);
       }
-      const m=document.createElement('div');
-      m.className='bracket-match';
-      if(match.bye){
-        const entA=document.createElement('div');
-        entA.className='bracket-entry winner';
-        entA.textContent=match.a.flag+' '+match.a.name;
-        const entB=document.createElement('div');
-        entB.className='bracket-entry bye';
-        entB.textContent='bye';
-        m.appendChild(entA);m.appendChild(entB);
+      const m = document.createElement('div'); m.className='bracket-match';
+      if (match.bye) {
+        const eA=document.createElement('div');eA.className='b-entry win';eA.textContent=match.a.flag+' '+match.a.name;
+        const eB=document.createElement('div');eB.className='b-entry bye';eB.textContent='bye';
+        m.appendChild(eA);m.appendChild(eB);
       } else {
-        [match.a,match.b].forEach(c=>{
-          const ent=document.createElement('div');
-          ent.className='bracket-entry'+(c.name===match.winner.name?' winner':'');
-          ent.textContent=c.flag+' '+c.name;
-          m.appendChild(ent);
+        [match.a,match.b].forEach(c => {
+          const e=document.createElement('div');
+          e.className='b-entry'+(c.name===match.winner.name?' win':'');
+          e.textContent=c.flag+' '+c.name; m.appendChild(e);
         });
       }
-      mwrap.appendChild(m);
-      matchesEl.appendChild(mwrap);
+      mw.appendChild(m); mEl.appendChild(mw);
     });
-    roundEl.appendChild(matchesEl);
-    wrap.appendChild(roundEl);
+    rEl.appendChild(mEl); wrap.appendChild(rEl);
   });
-  const champEl=document.createElement('div');
-  champEl.className='bracket-round';
-  champEl.style.minHeight=totalH+'px';
-  const champHeader=document.createElement('div');
-  champHeader.className='round-header';
-  champHeader.textContent='Winner';
-  champEl.appendChild(champHeader);
-  const champBody=document.createElement('div');
-  champBody.style.display='flex';
-  champBody.style.alignItems='center';
-  champBody.style.flex='1';
+  const cEl=document.createElement('div');cEl.className='bracket-round';cEl.style.minHeight=totalH+'px';
+  const cLbl=document.createElement('div');cLbl.className='round-label';cLbl.textContent='Winner';cEl.appendChild(cLbl);
+  const cBody=document.createElement('div');cBody.style.cssText='display:flex;align-items:center;flex:1;';
   const lastRound=bracketRounds[bracketRounds.length-1];
-  const champion=lastRound?lastRound[lastRound.length-1].winner:null;
-  if(champion){
-    const conn=document.createElement('div');
-    conn.className='connector';
-    const top=document.createElement('div');top.className='conn-top';
-    const bot=document.createElement('div');bot.className='conn-bot';
-    conn.appendChild(top);conn.appendChild(bot);
-    champBody.appendChild(conn);
-    const champEntry=document.createElement('div');
-    champEntry.className='champion-entry';
-    champEntry.textContent=champion.flag+' '+champion.name;
-    champBody.appendChild(champEntry);
+  const champ=lastRound?lastRound[lastRound.length-1].winner:null;
+  if (champ) {
+    const conn=document.createElement('div');conn.className='connector';
+    const t=document.createElement('div');t.className='conn-t';
+    const b=document.createElement('div');b.className='conn-b';
+    conn.appendChild(t);conn.appendChild(b);cBody.appendChild(conn);
+    const ce=document.createElement('div');ce.className='champ-entry';ce.textContent=champ.flag+' '+champ.name;cBody.appendChild(ce);
   }
-  champEl.appendChild(champBody);
-  wrap.appendChild(champEl);
+  cEl.appendChild(cBody);wrap.appendChild(cEl);
 }
-
-showScreen('homeScreen');
 </script>
+</body>
+</html>
